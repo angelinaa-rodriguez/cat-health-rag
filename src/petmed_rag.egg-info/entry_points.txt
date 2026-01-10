@@ -1,0 +1,2 @@
+[console_scripts]
+petmed-rag = petmed_rag.cli.main:main
