@@ -1,0 +1,19 @@
+{
+  "id": "gsvc-vomiting",
+  "url": "https://gsvs.org/blog/cat-throwing-up-emergency/",
+  "title": "Cat Throwing Up: Is It a Veterinary Emergency?",
+  "publisher": "Garden State Veterinary Center",
+  "species": [
+    "cat"
+  ],
+  "topic_tags": [
+    "vomiting",
+    "gi"
+  ],
+  "fetched_at_utc": "2026-01-10T20:45:55.792289+00:00",
+  "http_status": 200,
+  "final_url": "https://gsvs.org/blog/cat-throwing-up-emergency/",
+  "content_type": "text/html; charset=utf-8",
+  "hostname": "gsvs.org",
+  "raw_filename": "gsvc-vomiting__5ad6924771.html"
+}

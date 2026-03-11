@@ -1,0 +1,28 @@
+sources:
+  - id: gsvc-vomiting
+    title: "Cat Throwing Up: Is It a Veterinary Emergency?"
+    publisher: "Garden State Veterinary Center"
+    species: ["cat"]
+    topic_tags: ["vomiting", "gi"]
+    url: "https://gsvs.org/blog/cat-throwing-up-emergency/"
+
+  - id: winthrop-vet-vomiting
+    title: "Why Is My Cat Throwing Up (Again)? A Fur-Real Guide to Feline Vomit"
+    publisher: "Winthrop Veterinary Hospital"
+    species: ["cat"]
+    topic_tags: ["vomiting", "gi"]
+    url: "https://winthropvet.net/news/why-is-my-cat-throwing-up-again-a-fur-real-guide-to-feline-vomit"
+
+  - id: broomfield-vet-vomiting
+    title: "My Cat Keeps Coughing – Should I Call the Vet?"
+    publisher: "Broomfield Veterinary Hospital"
+    species: ["cat"]
+    topic_tags: ["coughing", "respiratory", "cough"]
+    url: "https://broomfieldvet.com/blog/cat-coughing/"
+
+  # - id: gsvc-coughing
+  #   title: "Why Is My Cat Coughing: A Guide to Emergency Signs"
+  #   publisher: "Garden State Veterinary Center"
+  #   species: ["cat"]
+  #   topic_tags: ["coughing", "respiratory", "cough"]
+  #   url: "https://gsvs.org/blog/why-cat-coughing-emergency/"
