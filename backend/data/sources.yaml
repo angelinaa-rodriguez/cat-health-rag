@@ -19,10 +19,3 @@ sources:
     species: ["cat"]
     topic_tags: ["coughing", "respiratory", "cough"]
     url: "https://broomfieldvet.com/blog/cat-coughing/"
-
-  # - id: gsvc-coughing
-  #   title: "Why Is My Cat Coughing: A Guide to Emergency Signs"
-  #   publisher: "Garden State Veterinary Center"
-  #   species: ["cat"]
-  #   topic_tags: ["coughing", "respiratory", "cough"]
-  #   url: "https://gsvs.org/blog/why-cat-coughing-emergency/"

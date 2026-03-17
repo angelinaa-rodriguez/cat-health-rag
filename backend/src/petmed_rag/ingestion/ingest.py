@@ -4,31 +4,8 @@ from pathlib import Path
 from typing import List, Dict, Any
 import chromadb
 
+from petmed_rag.ingestion.chunk import chunk_text
 from petmed_rag.embeddings import get_embedder
-
-
-def chunk_text(text: str, chunk_size: int = 800, overlap: int = 100) -> list[str]:
-    if chunk_size <= 0:
-        raise ValueError("chunk_size must be > 0")
-    if overlap < 0:
-        raise ValueError("overlap must be >= 0")
-    if overlap >= chunk_size:
-        raise ValueError("overlap must be smaller than chunk_size")
-
-    chunks = []
-    i = 0
-    n = len(text)
-
-    while i < n:
-        j = min(n, i + chunk_size)
-        chunks.append(text[i:j])
-
-        if j == n:
-            break
-
-        i = j - overlap
-
-    return chunks
 
 
 def ingest_folder(
@@ -81,17 +58,18 @@ def ingest_folder(
             continue
 
         text = p.read_text(encoding="utf-8", errors="ignore")
-        chunks = chunk_text(text, chunk_size=chunk_size, overlap=overlap)
+        base_metadata = {
+            "doc_id": p.stem,
+            "source_path": str(p),
+            "file_name": p.name,
+        }
 
-        for idx, ch in enumerate(chunks):
-            doc_id = f"{p.as_posix()}::chunk{idx}"
-            ids.append(doc_id)
-            docs.append(ch)
-            metas.append({
-                "source_path": str(p),
-                "chunk_index": idx,
-                "file_name": p.name,
-            })
+        chunks = chunk_text(text, base_metadata, chunk_size, overlap)
+
+        for ch in chunks:
+            ids.append(ch.chunk_id)
+            docs.append(ch.text)
+            metas.append(ch.metadata)
 
             if len(docs) >= batch_size:
                 flush_batch()

@@ -4,7 +4,9 @@ from petmed_rag.generation.prompt import build_prompt
 
 client = OpenAI(api_key=settings.openai_api_key)
 
-def generate_answer(question: str, context_blocks: list[str]) -> str:
+def generate_answer(question: str, chunks) -> str:
+    context_blocks = [c.text for c in chunks]
+
     prompt = build_prompt(question, context_blocks)
 
     resp = client.chat.completions.create(
