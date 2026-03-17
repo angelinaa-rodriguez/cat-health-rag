@@ -1,7 +1,88 @@
 sources:
+  - id: vca-illness
+    title: "Recognizing the Signs of Illness in Cats"
+    publisher: "VCA Animal Hospitals"
+    domain: "vcahospitals.com"
+    species: ["cat"]
+    topic_tags: ["illness", "sick"]
+    url: "https://vcahospitals.com/know-your-pet/recognizing-signs-of-illness-in-cats"
+
+  - id: vca-sick-care
+    title: "Caring for Your Sick Cat"
+    publisher: "VCA Animal Hospitals"
+    domain: "vcahospitals.com"
+    species: ["cat"]
+    topic_tags: ["illness", "sick"]
+    url: "https://vcahospitals.com/know-your-pet/managing-the-sick-cat"
+
+  - id: vca-seizure
+    title: "Seizures and Epilepsy in Cats"
+    publisher: "VCA Animal Hospitals"
+    domain: "vcahospitals.com"
+    species: ["cat"]
+    topic_tags: ["seizure", "epilepsy"]
+    url: "https://vcahospitals.com/know-your-pet/seizures-and-epilepsy-in-cats"
+
+  - id: vca-weight-loss
+    title: "Following a Weight Loss Plan for Cats"
+    publisher: "VCA Animal Hospitals"
+    domain: "vcahospitals.com"
+    species: ["cat"]
+    topic_tags: ["weight-loss", "diabetes", "heart disease", "obesity"]
+    url: "https://vcahospitals.com/know-your-pet/creating-a-weight-reduction-plan-for-cats"
+
+  - id: vca-diarrhea
+    title: "Diarrhea in Cats"
+    publisher: "VCA Animal Hospitals"
+    domain: "vcahospitals.com"
+    species: ["cat"]
+    topic_tags: ["diarrhea", "poop"]
+    url: "https://vcahospitals.com/know-your-pet/diarrhea-in-cats"
+
+  - id: vca-coughing
+    title: "Coughing in Cats"
+    publisher: "VCA Animal Hospitals"
+    domain: "vcahospitals.com"
+    species: ["cat"]
+    topic_tags: ["coughing"]
+    url: "https://vcahospitals.com/know-your-pet/coughing-in-cats"
+
+  - id: cornell-feeding
+    title: "Feeding Your Cat"
+    publisher: "Cornell College of Veterinary Medicine"
+    domain: "vet.cornell.edu"
+    species: ["cat"]
+    topic_tags: ["feed", "obesity", "anorexia", "allergies", "diabetes"]
+    url: "https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/feeding-your-cat"
+
+  - id: cornell-breathing
+    title: "Dyspnea (Difficulty Breathing)"
+    publisher: "Cornell College of Veterinary Medicine"
+    domain: "vet.cornell.edu"
+    species: ["cat"]
+    topic_tags: ["dyspnea", "breathing"]
+    url: "https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/dyspnea-difficulty-breathing"
+
+  - id: cornell-hairball
+    title: "The Danger of Hairballs"
+    publisher: "Cornell College of Veterinary Medicine"
+    domain: "vet.cornell.edu"
+    species: ["cat"]
+    topic_tags: ["hairball", "vomiting", "lung", "asthma"]
+    url: "https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/danger-hairballs"
+
+  - id: uvh-lethargy
+    title: "Low Energy Cat: Causes and Solutions for Feline Lethargy"
+    publisher: "University Veterinary Hospital"
+    domain: "uvhvets.com"
+    species: ["cat"]
+    topic_tags: ["energy", "lethargy"]
+    url: "https://uvhvets.com/blog/low-energy-cat-causes-and-solutions-for-feline-lethargy/"
+
   - id: gsvc-vomiting
     title: "Cat Throwing Up: Is It a Veterinary Emergency?"
     publisher: "Garden State Veterinary Center"
+    domain: "gsvs.org"
     species: ["cat"]
     topic_tags: ["vomiting", "gi"]
     url: "https://gsvs.org/blog/cat-throwing-up-emergency/"
@@ -9,13 +90,31 @@ sources:
   - id: winthrop-vet-vomiting
     title: "Why Is My Cat Throwing Up (Again)? A Fur-Real Guide to Feline Vomit"
     publisher: "Winthrop Veterinary Hospital"
+    domain: "winthropvet.net"
     species: ["cat"]
     topic_tags: ["vomiting", "gi"]
     url: "https://winthropvet.net/news/why-is-my-cat-throwing-up-again-a-fur-real-guide-to-feline-vomit"
 
-  - id: broomfield-vet-vomiting
+  - id: broomfield-vet-coughing
     title: "My Cat Keeps Coughing – Should I Call the Vet?"
     publisher: "Broomfield Veterinary Hospital"
+    domain: "broomfieldvet.com"
     species: ["cat"]
-    topic_tags: ["coughing", "respiratory", "cough"]
+    topic_tags: ["coughing", "respiratory"]
     url: "https://broomfieldvet.com/blog/cat-coughing/"
+
+  - id: avma-uninary-tract-disease
+    title: "Feline lower urinary tract disease (FLUTD)"
+    publisher: "American Veterinary Medical Association"
+    domain: "avma.org"
+    species: ["cat"]
+    topic_tags: ["urine"]
+    url: "https://www.avma.org/resources-tools/pet-owners/petcare/feline-lower-urinary-tract-disease"
+
+  - id: icatcare-inappetence
+    title: "Inappetence in cats"
+    publisher: "International Cat Care"
+    domain: "icatcare.org"
+    species: ["cat"]
+    topic_tags: ["inappetence", "appetite-loss"]
+    url: "https://www.avma.org/https://icatcare.org/articles/inappetence-in-cats"
