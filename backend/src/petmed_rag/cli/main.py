@@ -1,5 +1,6 @@
 import typer
 
+from petmed_rag.config import PROCESSED_DIR, CHROMA_DIR
 from petmed_rag.ingestion.ingest import ingest_folder
 from petmed_rag.retrieval.service import retrieve_context
 from petmed_rag.generation.answer import generate_answer
@@ -11,8 +12,8 @@ app = typer.Typer(add_completion=False)
 def ingest():
     """Ingest processed documents into the Chroma vector store."""
     n = ingest_folder(
-        input_dir="./data/processed",
-        persist_dir="./data/chroma",
+        input_dir= PROCESSED_DIR,
+        persist_dir= CHROMA_DIR,
         collection="cat-health",
         embedder="openai",
         openai_model="text-embedding-3-small",
@@ -27,9 +28,39 @@ def ask(question: str):
 
     chunks = retrieve_context(question, k=5)
 
+    unique_chunks = []
+    seen_sources = set()
+
+    for c in chunks:
+        source_key = (
+            c.metadata.get("title")
+            or c.metadata.get("doc_id")
+            or c.metadata.get("file_name")
+            or c.doc_id
+        )
+        if source_key not in seen_sources:
+            unique_chunks.append(c)
+            seen_sources.add(source_key)
+
+    chunks = unique_chunks
+
     if not chunks:
         typer.echo("No relevant documents found.")
         raise typer.Exit()
+
+    typer.echo("Retrieved context:\n")
+    for i, c in enumerate(chunks, start=1):
+        source = (
+            c.metadata.get("title")
+            or c.metadata.get("publisher")
+            or c.metadata.get("file_name")
+            or c.metadata.get("doc_id")
+            or "Unknown source"
+        )
+        preview = c.text[:180].replace("\n", " ").strip()
+        typer.echo(f"[{i}] {source}")
+        typer.echo(f"    score={c.score:.3f}")
+        typer.echo(f"    {preview}...\n")
 
     answer = generate_answer(question, chunks)
 
@@ -37,19 +68,17 @@ def ask(question: str):
     typer.echo(answer)
 
     typer.echo("\nSources:\n")
-
     seen = set()
-    
-    for c in chunks:
+    for i, c in enumerate(chunks, start=1):
         source = (
-            c.metadata.get("file_name")
-            or c.metadata.get("source_path")
+            c.metadata.get("title")
+            or c.metadata.get("publisher")
+            or c.metadata.get("file_name")
             or c.metadata.get("doc_id")
-            or "unknown source"
+            or "Unknown source"
         )
-
         if source not in seen:
-            typer.echo(f"- {source}")
+            typer.echo(f"[{i}] {source}")
             seen.add(source)
 
 

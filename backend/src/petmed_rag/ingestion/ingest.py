@@ -1,4 +1,5 @@
 from __future__ import annotations
+import yaml
 
 from pathlib import Path
 from typing import List, Dict, Any
@@ -7,6 +8,21 @@ import chromadb
 from petmed_rag.ingestion.chunk import chunk_text
 from petmed_rag.embeddings import get_embedder
 
+
+def load_source_metadata() -> dict[str, dict]:
+    sources_file = Path("./data/sources.yaml")
+    if not sources_file.exists():
+        return {}
+
+    with sources_file.open("r", encoding="utf-8") as f:
+        config = yaml.safe_load(f) or {}
+
+    out = {}
+    for src in config.get("sources", []):
+        src_id = src.get("id")
+        if src_id:
+            out[src_id] = src
+    return out
 
 def ingest_folder(
     input_dir: str,
@@ -23,6 +39,8 @@ def ingest_folder(
     base = Path(input_dir)
     if not base.exists():
         raise FileNotFoundError(f"input_dir not found: {input_dir}")
+
+    source_metadata_map = load_source_metadata()
 
     embedding_fn = get_embedder(
         embedder=embedder,
@@ -58,10 +76,17 @@ def ingest_folder(
             continue
 
         text = p.read_text(encoding="utf-8", errors="ignore")
+        source_id = p.stem.split("__")[0]
+        source_info = source_metadata_map.get(source_id, {})
+
         base_metadata = {
             "doc_id": p.stem,
+            "source_id": source_id,
             "source_path": str(p),
             "file_name": p.name,
+            "title": source_info.get("title"),
+            "publisher": source_info.get("publisher"),
+            "url": source_info.get("url"),
         }
 
         chunks = chunk_text(text, base_metadata, chunk_size, overlap)

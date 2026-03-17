@@ -1,0 +1,22 @@
+{
+  "id": "vca-illness",
+  "url": "https://vcahospitals.com/know-your-pet/recognizing-signs-of-illness-in-cats",
+  "title": "Recognizing the Signs of Illness in Cats",
+  "publisher": "VCA Animal Hospitals",
+  "species": [
+    "cat"
+  ],
+  "topic_tags": [
+    "illness",
+    "sick"
+  ],
+  "fetched_at_utc": "2026-03-17T11:00:03.947680+00:00",
+  "http_status": 200,
+  "final_url": "https://vcahospitals.com/know-your-pet/recognizing-signs-of-illness-in-cats",
+  "content_type": "text/html; charset=utf-8",
+  "hostname": "vcahospitals.com",
+  "raw_filename": "vca-illness__0a3dcf0009.html",
+  "extracted_title": "Recognizing the Signs of Illness in Cats",
+  "processed_filename": "vca-illness__0a3dcf0009.txt",
+  "char_count": 8748
+}

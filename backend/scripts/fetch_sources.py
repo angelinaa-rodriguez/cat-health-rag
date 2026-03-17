@@ -1,81 +1,56 @@
-from __future__ import annotations
-
+from pathlib import Path
 import hashlib
 import json
-import os
-import re
-from datetime import datetime, timezone
-from pathlib import Path
-from urllib.parse import urlparse
-
 import httpx
 import yaml
 
 RAW_DIR = Path("data/raw")
-META_DIR = Path("data/raw/_meta")
-SOURCES_FILE = Path("data/sources.yaml")
+RAW_META_DIR = RAW_DIR / "_meta"
 
 
-def slugify(text: str) -> str:
-    text = text.lower().strip()
-    text = re.sub(r"[^a-z0-9]+", "-", text)
-    return text.strip("-")[:80]
-
-
-def stable_filename(source_id: str, url: str) -> str:
-    h = hashlib.sha256(url.encode("utf-8")).hexdigest()[:10]
-    return f"{slugify(source_id)}__{h}.html"
-
-
-def load_sources() -> list[dict]:
-    data = yaml.safe_load(SOURCES_FILE.read_text(encoding="utf-8"))
-    return data.get("sources", [])
+def slugify_id(source_id: str, url: str) -> str:
+    short = hashlib.md5(url.encode("utf-8")).hexdigest()[:10]
+    return f"{source_id}__{short}"
 
 
 def main():
     RAW_DIR.mkdir(parents=True, exist_ok=True)
-    META_DIR.mkdir(parents=True, exist_ok=True)
+    RAW_META_DIR.mkdir(parents=True, exist_ok=True)
 
-    sources = load_sources()
-    if not sources:
-        raise SystemExit("No sources found in data/sources.yaml")
+    with open("data/sources.yaml", "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
+
+    sources = config["sources"]
 
     headers = {
-        "User-Agent": "petmed-rag/0.1 (+portfolio project; respectful crawler)"
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/123.0.0.0 Safari/537.36"
+        ),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
     }
 
-    with httpx.Client(timeout=30.0, headers=headers, follow_redirects=True) as client:
-        for s in sources:
-            url = s["url"]
-            source_id = s["id"]
+    with httpx.Client(headers=headers, follow_redirects=True, timeout=20.0) as client:
+        for src in sources:
+            try:
+                print(f"Fetching: {src['id']} -> {src['url']}")
+                r = client.get(src["url"])
+                r.raise_for_status()
 
-            fname = stable_filename(source_id, url)
-            out_html = RAW_DIR / fname
-            out_meta = META_DIR / (fname.replace(".html", ".json"))
+                stem = slugify_id(src["id"], src["url"])
+                html_path = RAW_DIR / f"{stem}.html"
+                meta_path = RAW_META_DIR / f"{stem}.json"
 
-            print(f"Fetching: {source_id} -> {url}")
-            r = client.get(url)
-            r.raise_for_status()
+                html_path.write_text(r.text, encoding="utf-8")
+                meta_path.write_text(json.dumps(src, indent=2), encoding="utf-8")
 
-            out_html.write_bytes(r.content)
+                print(f"Saved: {html_path}")
 
-            meta = {
-                "id": source_id,
-                "url": url,
-                "title": s.get("title"),
-                "publisher": s.get("publisher"),
-                "species": s.get("species", []),
-                "topic_tags": s.get("topic_tags", []),
-                "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
-                "http_status": r.status_code,
-                "final_url": str(r.url),
-                "content_type": r.headers.get("content-type"),
-                "hostname": urlparse(str(r.url)).hostname,
-                "raw_filename": out_html.name,
-            }
-            out_meta.write_text(json.dumps(meta, indent=2), encoding="utf-8")
-
-    print("\nDone. Raw HTML saved to data/raw and metadata to data/raw/_meta")
+            except Exception as e:
+                print(f"Skipping {src['id']}: {e}")
+                continue
 
 
 if __name__ == "__main__":

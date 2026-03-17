@@ -1,0 +1,19 @@
+{
+  "id": "vca-seizure",
+  "url": "https://vcahospitals.com/know-your-pet/seizures-and-epilepsy-in-cats",
+  "title": "Seizures and Epilepsy in Cats",
+  "publisher": "VCA Animal Hospitals",
+  "species": [
+    "cat"
+  ],
+  "topic_tags": [
+    "seizure",
+    "epilepsy"
+  ],
+  "fetched_at_utc": "2026-03-17T11:00:05.243155+00:00",
+  "http_status": 200,
+  "final_url": "https://vcahospitals.com/know-your-pet/seizures-and-epilepsy-in-cats",
+  "content_type": "text/html; charset=utf-8",
+  "hostname": "vcahospitals.com",
+  "raw_filename": "vca-seizure__be79bc5c12.html"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "vca-sick-care",
+  "url": "https://vcahospitals.com/know-your-pet/managing-the-sick-cat",
+  "title": "Caring for Your Sick Cat",
+  "publisher": "VCA Animal Hospitals",
+  "species": [
+    "cat"
+  ],
+  "topic_tags": [
+    "illness",
+    "sick"
+  ],
+  "fetched_at_utc": "2026-03-17T11:00:04.675469+00:00",
+  "http_status": 200,
+  "final_url": "https://vcahospitals.com/know-your-pet/managing-the-sick-cat",
+  "content_type": "text/html; charset=utf-8",
+  "hostname": "vcahospitals.com",
+  "raw_filename": "vca-sick-care__a0f7e4305f.html"
+}
