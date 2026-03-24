@@ -19,7 +19,7 @@ def chunk_text(text: str, base_metadata: dict, chunk_size: int, overlap: int) ->
         if len(chunk) >= 200:
             md = dict(base_metadata)
             md["chunk_index"] = i
-            chunk_id = f'{base_metadata["doc_id"]}_c{i}'
+            chunk_id = f"{base_metadata['doc_id']}__{base_metadata.get('source_file','doc')}__c{i}"
             chunks.append(Chunk(chunk_id=chunk_id, text=chunk, metadata=md))
             i += 1
 

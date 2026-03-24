@@ -1,6 +1,6 @@
 def build_prompt(question: str, context_blocks: list[str]) -> str:
     context = "\n\n---\n\n".join(context_blocks)
-
+    
     return f"""
 Your job is to answer the user's question using only the provided sources.
 

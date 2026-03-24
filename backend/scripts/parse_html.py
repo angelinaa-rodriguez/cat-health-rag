@@ -1,4 +1,5 @@
 from __future__ import annotations
+import shutil
 
 import json
 import re
@@ -36,6 +37,10 @@ def html_to_clean_text(html: str) -> tuple[str, str | None]:
     return normalize_whitespace(text), title
 
 def main():
+    # clears processed folder
+    if OUT_DIR.exists():
+        shutil.rmtree(OUT_DIR)
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     OUT_META_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -48,7 +53,7 @@ def main():
     for html_path in html_files:
         meta_path = RAW_META_DIR / html_path.name.replace(".html", ".json")
         if not meta_path.exists():
-            print(f"⚠️  Missing meta for {html_path.name}, skipping.")
+            print(f" Missing meta for {html_path.name}, skipping.")
             continue
 
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -61,10 +66,10 @@ def main():
         print("--- end preview ---\n")
 
         if len(clean_text) < 400:
-            print(f"⚠️  Extracted text too short for {html_path.name} ({len(clean_text)} chars), skipping.")
+            print(f"Extracted text too short for {html_path.name} ({len(clean_text)} chars), skipping.")
             continue
 
-        out_txt = OUT_DIR / html_path.name.replace(".html", ".txt")
+        out_txt = OUT_DIR / f"{meta['id']}.txt"
         out_txt.write_text(clean_text, encoding="utf-8")
 
         # enrich meta for downstream citations
@@ -73,11 +78,11 @@ def main():
         processed_meta["processed_filename"] = out_txt.name
         processed_meta["char_count"] = len(clean_text)
 
-        out_meta = OUT_META_DIR / meta_path.name
+        out_meta = OUT_META_DIR / f"{meta['id']}.json"
         out_meta.write_text(json.dumps(processed_meta, indent=2), encoding="utf-8")
 
         processed_count += 1
-        print(f"✅ Parsed {html_path.name} -> {out_txt.name}")
+        print(f"Parsed {html_path.name} -> {out_txt.name}")
 
     print(f"\nDone. Parsed {processed_count} documents into data/processed/")
 

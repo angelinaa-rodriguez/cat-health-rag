@@ -66,7 +66,7 @@ def main():
         )
         print(f"Upserted {i+len(batch)}/{len(all_chunks)}")
 
-    print("\n✅ Index build complete.")
+    print("\n Index build complete.")
     print(f"Chroma persisted at: {settings.chroma_dir}")
     print(f"Collection: {settings.collection_name}")
 

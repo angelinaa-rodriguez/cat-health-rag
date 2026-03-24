@@ -1,6 +1,7 @@
 import typer
 
 from petmed_rag.config import PROCESSED_DIR, CHROMA_DIR
+from petmed_rag.utils.citations import unique_sources
 from petmed_rag.ingestion.ingest import ingest_folder
 from petmed_rag.retrieval.service import retrieve_context
 from petmed_rag.generation.answer import generate_answer
@@ -28,22 +29,6 @@ def ask(question: str):
 
     chunks = retrieve_context(question, k=5)
 
-    unique_chunks = []
-    seen_sources = set()
-
-    for c in chunks:
-        source_key = (
-            c.metadata.get("title")
-            or c.metadata.get("doc_id")
-            or c.metadata.get("file_name")
-            or c.doc_id
-        )
-        if source_key not in seen_sources:
-            unique_chunks.append(c)
-            seen_sources.add(source_key)
-
-    chunks = unique_chunks
-
     if not chunks:
         typer.echo("No relevant documents found.")
         raise typer.Exit()
@@ -68,18 +53,8 @@ def ask(question: str):
     typer.echo(answer)
 
     typer.echo("\nSources:\n")
-    seen = set()
-    for i, c in enumerate(chunks, start=1):
-        source = (
-            c.metadata.get("title")
-            or c.metadata.get("publisher")
-            or c.metadata.get("file_name")
-            or c.metadata.get("doc_id")
-            or "Unknown source"
-        )
-        if source not in seen:
-            typer.echo(f"[{i}] {source}")
-            seen.add(source)
+    for i, source in enumerate(unique_sources(chunks), start=1):
+        typer.echo(f"[{i}] {source['title']}")
 
 
 def main():

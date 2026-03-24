@@ -5,10 +5,10 @@ from petmed_rag.generation.prompt import build_prompt
 client = OpenAI(api_key=settings.openai_api_key)
 
 
-def generate_answer(question: str, chunks) -> str:
+def generate_answer(question: str, retrieved_chunks) -> str:
     context_blocks = []
 
-    for i, c in enumerate(chunks, start=1):
+    for i, c in enumerate(retrieved_chunks, start=1):
         source = (
             c.metadata.get("title")
             or c.metadata.get("publisher")
