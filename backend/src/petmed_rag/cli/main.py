@@ -2,7 +2,7 @@ import typer
 
 from petmed_rag.config import PROCESSED_DIR, CHROMA_DIR
 from petmed_rag.utils.citations import unique_sources
-from petmed_rag.ingestion.ingest import ingest_folder
+from petmed_rag.ingestion.ingest import ingest_processed_documents
 from petmed_rag.retrieval.service import retrieve_context
 from petmed_rag.generation.answer import generate_answer
 
@@ -12,13 +12,7 @@ app = typer.Typer(add_completion=False)
 @app.command()
 def ingest():
     """Ingest processed documents into the Chroma vector store."""
-    n = ingest_folder(
-        input_dir= PROCESSED_DIR,
-        persist_dir= CHROMA_DIR,
-        collection="cat-health",
-        embedder="openai",
-        openai_model="text-embedding-3-small",
-    )
+    n = ingest_processed_documents()
     typer.echo(f"Ingested {n} chunks")
 
 

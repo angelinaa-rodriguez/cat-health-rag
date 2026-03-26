@@ -24,6 +24,8 @@ def _distance_to_score(distance: Optional[float]) -> float:
 class ChromaRetriever:
     def __init__(
         self,
+        persist_dir: str,
+        collection_name: str,
         embedder,  # callable: (list[str]) -> list[list[float]]
     ) -> None:
         self.collection = get_collection()

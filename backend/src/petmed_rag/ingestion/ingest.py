@@ -1,95 +1,87 @@
 from __future__ import annotations
-import yaml
 
+import json
 from pathlib import Path
 from typing import List, Dict, Any
+
 import chromadb
 
-from petmed_rag.ingestion.chunk import chunk_text
+from petmed_rag.config import PROCESSED_DIR, CHROMA_DIR, settings
 from petmed_rag.embeddings import get_embedder
+from petmed_rag.ingestion.chunk import chunk_text
 
 
-def load_source_metadata() -> dict[str, dict]:
-    sources_file = Path("./data/sources.yaml")
-    if not sources_file.exists():
-        return {}
+def ingest_processed_documents(batch_size: int = 100) -> int:
+    base = PROCESSED_DIR
+    meta_dir = base / "_meta"
 
-    with sources_file.open("r", encoding="utf-8") as f:
-        config = yaml.safe_load(f) or {}
-
-    out = {}
-    for src in config.get("sources", []):
-        src_id = src.get("id")
-        if src_id:
-            out[src_id] = src
-    return out
-
-def ingest_folder(
-    input_dir: str,
-    persist_dir: str,
-    collection: str,
-    embedder: str = "openai",
-    openai_model: str = "text-embedding-3-small",
-    st_model: str = "all-MiniLM-L6-v2",
-    glob_pattern: str = "**/*",
-    chunk_size: int = 1200,
-    overlap: int = 150,
-    batch_size: int = 100,
-) -> int:
-    base = Path(input_dir)
     if not base.exists():
-        raise FileNotFoundError(f"input_dir not found: {input_dir}")
+        raise FileNotFoundError(f"Processed directory not found: {base}")
 
-    source_metadata_map = load_source_metadata()
+    if not meta_dir.exists():
+        raise FileNotFoundError(f"Processed metadata directory not found: {meta_dir}")
 
     embedding_fn = get_embedder(
-        embedder=embedder,
-        openai_model=openai_model,
-        st_model=st_model,
+        embedder="openai",
+        openai_model=settings.embedding_model,
     )
 
-    client = chromadb.PersistentClient(path=persist_dir)
-    col = client.get_or_create_collection(name=collection)
+    client = chromadb.PersistentClient(path=str(CHROMA_DIR))
+    col = client.get_or_create_collection(name=settings.collection_name)
 
     total_added = 0
     ids: List[str] = []
     docs: List[str] = []
     metas: List[Dict[str, Any]] = []
 
-    def flush_batch():
+    def flush_batch() -> None:
         nonlocal ids, docs, metas, total_added
+
         if not docs:
             return
+
         embeddings = embedding_fn(docs)
-        col.add(ids=ids, documents=docs, metadatas=metas, embeddings=embeddings)
+        col.upsert(
+            ids=ids,
+            documents=docs,
+            metadatas=metas,
+            embeddings=embeddings,
+        )
+
         total_added += len(docs)
         ids, docs, metas = [], [], []
 
-    print(f"ingesting from: {base.resolve()}")
+    txt_files = sorted([p for p in base.glob("*.txt") if p.is_file()])
+    if not txt_files:
+        raise FileNotFoundError(f"No processed .txt files found in {base}")
 
-    for p in base.glob(glob_pattern):
-        if p.is_dir():
+    print(f"Ingesting from: {base.resolve()}")
+
+    for txt_path in txt_files:
+        meta_path = meta_dir / f"{txt_path.stem}.json"
+        if not meta_path.exists():
+            print(f"Missing metadata for {txt_path.name}, skipping.")
             continue
-        print(f"found file: {p} | suffix={p.suffix.lower()}")
 
-        if p.suffix.lower() not in {".txt", ".md"}:
-            continue
-
-        text = p.read_text(encoding="utf-8", errors="ignore")
-        source_id = p.stem.split("__")[0]
-        source_info = source_metadata_map.get(source_id, {})
+        text = txt_path.read_text(encoding="utf-8", errors="ignore")
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
 
         base_metadata = {
-            "doc_id": p.stem,
-            "source_id": source_id,
-            "source_path": str(p),
-            "file_name": p.name,
-            "title": source_info.get("title"),
-            "publisher": source_info.get("publisher"),
-            "url": source_info.get("url"),
+            "doc_id": meta.get("id", txt_path.stem),
+            "source_id": meta.get("id", txt_path.stem),
+            "source_path": str(txt_path),
+            "file_name": txt_path.name,
+            "title": meta.get("title") or meta.get("extracted_title"),
+            "publisher": meta.get("publisher"),
+            "url": meta.get("final_url") or meta.get("url"),
         }
 
-        chunks = chunk_text(text, base_metadata, chunk_size, overlap)
+        chunks = chunk_text(
+            text=text,
+            base_metadata=base_metadata,
+            chunk_size=settings.chunk_size,
+            overlap=settings.chunk_overlap,
+        )
 
         for ch in chunks:
             ids.append(ch.chunk_id)
@@ -100,4 +92,8 @@ def ingest_folder(
                 flush_batch()
 
     flush_batch()
+
+    print(f"Ingested {total_added} chunks into collection '{settings.collection_name}'")
+    print(f"Chroma persisted at: {CHROMA_DIR}")
+
     return total_added

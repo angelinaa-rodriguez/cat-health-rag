@@ -1,12 +1,21 @@
 \cat-health-rag:
     .\.venv\Scripts\Activate.ps1
 
-DOCUMENT PREPROCESSING & VECTOR INDEXING:
+OFFLINE INGESTION:
 
     \backend:
         python .\scripts\fetch_sources.py
         python .\scripts\parse_html.py
-        $env:PYTHONPATH="src" 
-        python .\scripts\build_index.py
+        python -m petmed_rag.cli.main ingest
 
+
+
+ONLINE QUERY:
+
+    \cli (terminal):
+        python -m petmed_rag.cli.main ask "Why is my cat vomiting?"
+
+    \api (FastAPI):
+        \backend:
+            uvicorn petmed_rag.api.main:app --reload
 
