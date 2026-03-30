@@ -19,8 +19,7 @@ cat-health-rag/
 │   │   └── sources.yaml      # source definitions
 │   ├── scripts/
 │   │   ├── fetch_sources.py  # download raw HTML
-│   │   ├── parse_html.py     # clean + extract text
-│   │   └── build_index.py    # optional alternative indexer
+│   │   └── parse_html.py     # clean + extract text
 │   └── src/
 │       └── petmed_rag/
 │           ├── api/          # FastAPI app
